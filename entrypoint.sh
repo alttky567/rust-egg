@@ -1,13 +1,13 @@
 #!/bin/bash
 cd /home/container
 
-# Cấu hình Cargo Home vào thư mục có quyền ghi để tránh lỗi Read-only
+# Cấu hình Cargo Home vào thư mục có quyền ghi
 export CARGO_HOME=/home/container/.cargo
 export PATH="/home/container/.cargo/bin:/usr/local/cargo/bin:${PATH}"
 
-echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mĐang khởi động hệ thống...\e[0m"
+echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mKhởi động hệ thống với Rust Nightly...\e[0m"
 
-# Kiểm tra xem cargo đã sống chưa
+# Kiểm tra phiên bản
 if ! command -v cargo &> /dev/null
 then
     echo -e "\e[1;31m[LỖI]: Không tìm thấy lệnh 'cargo'.\e[0m"
