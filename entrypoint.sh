@@ -1,24 +1,13 @@
 #!/bin/bash
 cd /home/container
 
-# Cấu hình Cargo Home vào thư mục có quyền ghi
+# Đảm bảo Cargo ghi vào thư mục có quyền (sửa lỗi Read-only)
 export CARGO_HOME=/home/container/.cargo
 export PATH="/home/container/.cargo/bin:/usr/local/cargo/bin:${PATH}"
+export RUSTC_BOOTSTRAP=1
 
-echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mKhởi động hệ thống với Rust Nightly...\e[0m"
+echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mĐang chạy trên Ubuntu với $(rustc --version)\e[0m"
 
-# Kiểm tra phiên bản
-if ! command -v cargo &> /dev/null
-then
-    echo -e "\e[1;31m[LỖI]: Không tìm thấy lệnh 'cargo'.\e[0m"
-else
-    echo -e "\e[1;32m[OK]: $(cargo --version) đã sẵn sàng.\e[0m"
-fi
-
-# Nhận lệnh từ Panel Pterodactyl
+# Thực thi lệnh từ Panel
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
-
-echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mLệnh khởi chạy: \e[1;34m${MODIFIED_STARTUP}\e[0m"
-
-# Thực thi
 eval ${MODIFIED_STARTUP}
