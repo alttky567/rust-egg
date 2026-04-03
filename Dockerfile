@@ -1,13 +1,15 @@
-# Sử dụng bản Rust mới nhất trên Alpine của Pterodactyl
-FROM ghcr.io/pterodactyl/yolks:rust_1.80
+# Sử dụng đúng image bạn vừa chọn
+FROM ghcr.io/ptero-eggs/yolks:rust_latest
 
 LABEL author="YourName" maintainer="your@email.com"
 
+# Chuyển sang root để cài đặt đồ chơi
 USER root
 
-# Alpine dùng 'apk' thay vì 'apt'
-# - build-base: Tương đương build-essential (g++, gcc, make)
-# - openssl-dev: Tương đương libssl-dev
+# Trên Alpine, chúng ta dùng 'apk' thay vì 'apt'
+# build-base: Bao gồm g++, gcc, make (tương đương build-essential)
+# openssl-dev: Tương đương libssl-dev
+# pkgconfig: Tương đương pkg-config
 RUN apk update && \
     apk add --no-cache \
         git \
@@ -21,11 +23,12 @@ RUN apk update && \
         pkgconfig \
         ca-certificates
 
-# Đường dẫn Clang trên Alpine thường khác Debian
+# Chỉ định đường dẫn cho bindgen tìm thấy Clang trên Alpine
 ENV LIBCLANG_PATH=/usr/lib
 
+# Trả lại quyền cho user container của Pterodactyl
 USER container
-ENV USER=container HOME=/home/container
+ENV  USER=container HOME=/home/container
 WORKDIR /home/container
 
 CMD ["/bin/bash"]
