@@ -10,8 +10,8 @@ USER root
 # build-base: Bao gồm g++, gcc, make (tương đương build-essential)
 # openssl-dev: Tương đương libssl-dev
 # pkgconfig: Tương đương pkg-config
-RUN apk update && \
-    apk add --no-cache \
+RUN apt update && \
+    apt install \
         git \
         build-base \
         cmake \
