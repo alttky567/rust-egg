@@ -1,48 +1,46 @@
-# Sử dụng Debian Bookworm (bản mới nhất, cực kỳ ổn định)
 FROM debian:bookworm-slim
 
-LABEL author="YourName" maintainer="your@email.com"
+LABEL author="YourName"
 
-# Tránh các câu hỏi tương tác khi cài đặt apt
+# Tránh các câu hỏi tương tác
 ENV DEBIAN_FRONTEND=noninteractive
+
+# Thiết lập đường dẫn Rust trước khi cài
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH
 
 USER root
 
-# 1. Cài đặt các công cụ hệ thống và thư viện bạn cần
-RUN apt update && \
-    apt install -y \
+# 1. Cài đặt các gói phụ thuộc (Chia nhỏ để dễ kiểm soát lỗi)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
         curl \
         git \
         g++ \
         gcc \
         make \
-        build-essential \
         cmake \
         clang \
         libclang-dev \
         libssl-dev \
         pkg-config \
         ca-certificates && \
-    apt clean && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 2. Cài đặt Rust (Rustup) cho toàn hệ thống
-# Chúng ta cài vào /usr/local để mọi user đều dùng được
-ENV RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH
-
-RUN curl --proto '=https' --tlsv1.2 -sSf https://rustup.rs | sh -s -- -y --no-modify-path && \
+# 2. Cài đặt Rust (Dùng link sh.rustup.rs ổn định hơn)
+# Thêm --default-toolchain stable để tránh script dừng lại hỏi
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal && \
     chmod -R a+w $RUSTUP_HOME $CARGO_HOME
 
-# 3. Thiết lập môi trường cho Pterodactyl
-# Tạo user 'container' giống như tiêu chuẩn của Pterodactyl
+# 3. Cấu hình User cho Pterodactyl
 RUN useradd -m -d /home/container container
 USER container
 ENV  USER=container HOME=/home/container
 WORKDIR /home/container
 
-# Biến môi trường quan trọng cho bindgen trong Rust
+# Biến môi trường cho bindgen
 ENV LIBCLANG_PATH=/usr/lib/libclang.so
 
 CMD ["/bin/bash"]
