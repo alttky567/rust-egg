@@ -1,23 +1,27 @@
 #!/bin/bash
-# Di chuyển vào thư mục làm việc của server
 cd /home/container
 
-# Cập nhật lại PATH để chắc chắn hệ thống thấy lệnh cargo
-export PATH="/home/container/.cargo/bin:/usr/local/cargo/bin:${PATH}"
+# Nạp lại biến môi trường một cách thủ công để chắc chắn Cargo được nhận diện
+export RUSTUP_HOME=/usr/local/rustup
 export CARGO_HOME=/home/container/.cargo
-export HOME=/home/container
+export PATH=/home/container/.cargo/bin:/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# Hiển thị thông tin môi trường để kiểm tra (log ra console Panel)
-echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mĐang kiểm tra môi trường hệ thống...\e[0m"
-rustc --version
-cargo --version
-g++ --version | head -n 1
+# Hiển thị log kiểm tra
+echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mĐang kiểm tra lệnh hệ thống...\e[0m"
 
-# Xử lý lệnh Startup từ Panel Pterodactyl
-# Thay thế các biến dạng {{VARIABLE}} thành giá trị thực tế
+# Thử tìm đường dẫn cargo, nếu không thấy sẽ báo lỗi cụ thể
+if ! command -v cargo &> /dev/null
+then
+    echo -e "\e[1;31m[LỖI]: Không tìm thấy lệnh 'cargo'. Kiểm tra lại PATH hoặc cài đặt.\e[0m"
+    # Liệt kê nội dung để debug nếu cần
+    ls -l /usr/local/cargo/bin/cargo || echo "Cargo bin không tồn tại ở /usr/local"
+else
+    echo -e "\e[1;32m[OK]: $(cargo --version) đã sẵn sàng.\e[0m"
+fi
+
+# Xử lý lệnh Startup từ Panel
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 
-echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mKhởi động server với lệnh: \e[1;34m${MODIFIED_STARTUP}\e[0m"
+echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mKhởi động với: \e[1;34m${MODIFIED_STARTUP}\e[0m"
 
-# Chạy lệnh startup
 eval ${MODIFIED_STARTUP}
