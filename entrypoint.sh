@@ -6,7 +6,7 @@ export CARGO_HOME=/home/container/.cargo
 export PATH="/home/container/.cargo/bin:/usr/local/cargo/bin:${PATH}"
 export RUSTC_BOOTSTRAP=1
 
-echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mĐang chạy trên Ubuntu với $(rustc --version)\e[0m"
+echo -e "\e[1;33m[Ptero-Runtime]: \e[1;32mĐang chạy trên Ubuntu 24.04 với GLIBC 2.39\e[0m"
 
 # Thực thi lệnh từ Panel
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
