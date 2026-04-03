@@ -1,5 +1,5 @@
 # Sử dụng base image Rust chính thức của Pterodactyl
-FROM ghcr.io/pterodactyl/yolks:rust_latest
+FROM ghcr.io/pterodactyl/yolks:rust_1.75
 
 LABEL author="YourName" maintainer="your@email.com"
 
